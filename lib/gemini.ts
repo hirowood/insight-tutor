@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI, Part } from "@google/generative-ai";
-import type { AllowedImageType } from "./schemas.ts";
+import type { AllowedImageType } from "./schemas.js";
 
 // 環境変数からAPIキーを取得（サーバーサイドのみ）
 const getApiKey = (): string => {
