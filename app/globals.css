@@ -1,21 +1,74 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-noto-sans-jp: "Noto Sans JP", sans-serif;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-noto-sans-jp), system-ui, sans-serif;
+}
+
+/* スクロールバーのスタイリング */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* フォーカス時のアウトライン改善 */
+*:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* 選択テキストのスタイル */
+::selection {
+  background-color: #bfdbfe;
+  color: #1e3a8a;
+}
+
+/* スムーズスクロール */
+html {
+  scroll-behavior: smooth;
+}
+
+/* アニメーション設定（モーション低減設定を尊重） */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 印刷用スタイル */
+@media print {
+  body {
+    background: white;
+  }
+  
+  header,
+  footer,
+  button {
+    display: none;
+  }
+  
+  .prose {
+    max-width: 100%;
+  }
 }
