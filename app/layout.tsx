@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
 
@@ -20,6 +20,22 @@ export const metadata: Metadata = {
     description: "AIが参考書の内容をわかりやすく解説",
     type: "website",
   },
+  // PWA対応用
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Insight Tutor",
+  },
+};
+
+// viewport設定を分離（Next.js 14+推奨）
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: "#3b82f6",
 };
 
 export default function RootLayout({

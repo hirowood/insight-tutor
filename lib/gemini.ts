@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI, Part } from "@google/generative-ai";
-import type { AllowedImageType } from "./schemas.js";
+import type { AllowedImageType } from "./schemas";
 
 // 環境変数からAPIキーを取得（サーバーサイドのみ）
 const getApiKey = (): string => {
@@ -44,7 +44,9 @@ export async function analyzeImageWithGemini(
   mimeType: AllowedImageType
 ): Promise<string> {
   const client = getGeminiClient();
-  const model = client.getGenerativeModel({ model: "gemini-1.5-flash" });
+  
+  // 最新のモデル名を使用
+  const model = client.getGenerativeModel({ model: "gemini-2.5-flash" });
 
   // 画像パートの作成
   const imagePart: Part = {

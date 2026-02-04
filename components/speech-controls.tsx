@@ -50,11 +50,11 @@ export function SpeechControls({ text }: SpeechControlsProps) {
   return (
     <div className="space-y-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
       {/* メインコントロール */}
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3">
         {status === "idle" && (
           <button
             onClick={() => speak(text)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-3 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 active:scale-[0.98]"
             aria-label="読み上げを開始"
           >
             <span className="text-lg">🔊</span>
@@ -66,7 +66,7 @@ export function SpeechControls({ text }: SpeechControlsProps) {
           <>
             <button
               onClick={pause}
-              className="flex items-center gap-2 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-3 sm:py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 active:scale-[0.98]"
               aria-label="一時停止"
             >
               <span className="text-lg">⏸️</span>
@@ -74,7 +74,7 @@ export function SpeechControls({ text }: SpeechControlsProps) {
             </button>
             <button
               onClick={stop}
-              className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-3 sm:py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 active:scale-[0.98]"
               aria-label="停止"
             >
               <span className="text-lg">⏹️</span>
@@ -87,7 +87,7 @@ export function SpeechControls({ text }: SpeechControlsProps) {
           <>
             <button
               onClick={resume}
-              className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-3 sm:py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 active:scale-[0.98]"
               aria-label="再開"
             >
               <span className="text-lg">▶️</span>
@@ -95,7 +95,7 @@ export function SpeechControls({ text }: SpeechControlsProps) {
             </button>
             <button
               onClick={stop}
-              className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-3 sm:py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 active:scale-[0.98]"
               aria-label="停止"
             >
               <span className="text-lg">⏹️</span>
@@ -106,7 +106,7 @@ export function SpeechControls({ text }: SpeechControlsProps) {
 
         {/* ステータス表示 */}
         <span
-          className={`px-3 py-1 text-xs rounded-full ${
+          className={`hidden sm:inline-block px-3 py-1 text-xs rounded-full ${
             status === "speaking"
               ? "bg-green-100 text-green-700"
               : status === "paused"
@@ -125,21 +125,21 @@ export function SpeechControls({ text }: SpeechControlsProps) {
 
       {/* 詳細設定 */}
       <details className="text-sm">
-        <summary className="cursor-pointer text-gray-600 hover:text-gray-800">
+        <summary className="cursor-pointer text-gray-600 hover:text-gray-800 py-2">
           ⚙️ 音声設定
         </summary>
-        <div className="mt-3 space-y-3 pl-4 border-l-2 border-gray-200">
+        <div className="mt-3 space-y-4 pl-4 border-l-2 border-gray-200">
           {/* 音声選択 */}
           {japaneseVoices.length > 0 && (
             <div>
-              <label htmlFor="voice-select" className="block text-gray-600 mb-1">
+              <label htmlFor="voice-select" className="block text-gray-600 mb-2">
                 音声を選択:
               </label>
               <select
                 id="voice-select"
                 value={selectedVoice?.name ?? ""}
                 onChange={handleVoiceChange}
-                className="w-full max-w-xs px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
               >
                 {japaneseVoices.map((voice) => (
                   <option key={voice.name} value={voice.name}>
@@ -152,7 +152,7 @@ export function SpeechControls({ text }: SpeechControlsProps) {
 
           {/* 読み上げ速度 */}
           <div>
-            <label htmlFor="rate-slider" className="block text-gray-600 mb-1">
+            <label htmlFor="rate-slider" className="block text-gray-600 mb-2">
               読み上げ速度: {rate.toFixed(1)}x
             </label>
             <input
@@ -163,9 +163,9 @@ export function SpeechControls({ text }: SpeechControlsProps) {
               step="0.1"
               value={rate}
               onChange={handleRateChange}
-              className="w-full max-w-xs"
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
             />
-            <div className="flex justify-between text-xs text-gray-400 max-w-xs">
+            <div className="flex justify-between text-xs text-gray-400 mt-1">
               <span>遅い</span>
               <span>速い</span>
             </div>

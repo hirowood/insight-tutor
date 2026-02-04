@@ -66,20 +66,20 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       {/* ヘッダー */}
-      <header className="bg-white shadow-sm border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
-            <span className="text-4xl">📚</span>
+      <header className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-10">
+        <div className="max-w-6xl mx-auto px-4 py-4 sm:py-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center gap-2 sm:gap-3">
+            <span className="text-3xl sm:text-4xl">📚</span>
             <span>Insight Tutor</span>
           </h1>
-          <p className="mt-2 text-gray-600">
-            参考書のページを画像でアップロードすると、AIがわかりやすく解説します
+          <p className="mt-1 sm:mt-2 text-sm sm:text-base text-gray-600">
+            参考書をスキャンして、AIがわかりやすく解説
           </p>
         </div>
       </header>
 
       {/* メインコンテンツ */}
-      <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
+      <div className="max-w-6xl mx-auto px-4 py-6 sm:py-8 space-y-6 sm:space-y-8">
         {/* ステップ1: 画像アップロード */}
         <section aria-labelledby="upload-section">
           <h2 id="upload-section" className="sr-only">
@@ -93,10 +93,10 @@ export default function Home() {
 
         {/* 解析ボタン */}
         {selectedImage && status !== "analyzing" && !result && (
-          <div className="flex justify-center">
+          <div className="flex justify-center px-4">
             <button
               onClick={handleAnalyze}
-              className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-lg font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-300"
+              className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-lg font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-300 active:scale-[0.98]"
             >
               ✨ AIで解析する
             </button>
@@ -105,12 +105,15 @@ export default function Home() {
 
         {/* ローディング */}
         {status === "analyzing" && (
-          <div className="flex justify-center">
-            <div className="bg-white p-8 rounded-2xl shadow-lg">
+          <div className="flex justify-center px-4">
+            <div className="w-full sm:w-auto bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
               <LoadingSpinner
                 message="AIが画像を解析しています..."
                 size="lg"
               />
+              <p className="text-center text-xs text-gray-400 mt-4">
+                通常10〜30秒かかります
+              </p>
             </div>
           </div>
         )}
@@ -118,17 +121,17 @@ export default function Home() {
         {/* エラー表示 */}
         {error && (
           <div
-            className="max-w-2xl mx-auto p-6 bg-red-50 border border-red-200 rounded-xl"
+            className="max-w-2xl mx-auto p-4 sm:p-6 bg-red-50 border border-red-200 rounded-xl"
             role="alert"
           >
             <div className="flex items-start gap-3">
-              <span className="text-2xl">⚠️</span>
-              <div>
+              <span className="text-xl sm:text-2xl">⚠️</span>
+              <div className="flex-1">
                 <h3 className="font-semibold text-red-800">エラーが発生しました</h3>
-                <p className="mt-1 text-red-600">{error}</p>
+                <p className="mt-1 text-sm text-red-600">{error}</p>
                 <button
                   onClick={handleReset}
-                  className="mt-4 px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"
+                  className="mt-4 w-full sm:w-auto px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"
                 >
                   やり直す
                 </button>
@@ -144,10 +147,10 @@ export default function Home() {
               content={result.content}
               timestamp={result.timestamp}
             />
-            <div className="flex justify-center pt-4">
+            <div className="flex justify-center pt-4 px-4">
               <button
                 onClick={handleReset}
-                className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2"
+                className="w-full sm:w-auto px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
               >
                 <span>🔄</span>
                 <span>新しい画像を解析</span>
@@ -162,12 +165,12 @@ export default function Home() {
             <h2 id="guide-section" className="text-lg font-semibold text-gray-700 mb-4 text-center">
               💡 使い方
             </h2>
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
               <div className="p-4 bg-white rounded-xl shadow-sm border border-gray-100 text-center">
                 <div className="text-3xl mb-2">1️⃣</div>
-                <h3 className="font-medium text-gray-800">画像をアップロード</h3>
+                <h3 className="font-medium text-gray-800">撮影・選択</h3>
                 <p className="text-sm text-gray-600 mt-1">
-                  参考書や教科書のページを撮影した画像を選択
+                  参考書のページをカメラで撮影、または画像を選択
                 </p>
               </div>
               <div className="p-4 bg-white rounded-xl shadow-sm border border-gray-100 text-center">
@@ -179,9 +182,9 @@ export default function Home() {
               </div>
               <div className="p-4 bg-white rounded-xl shadow-sm border border-gray-100 text-center">
                 <div className="text-3xl mb-2">3️⃣</div>
-                <h3 className="font-medium text-gray-800">テキスト＆音声で学習</h3>
+                <h3 className="font-medium text-gray-800">テキスト＆音声</h3>
                 <p className="text-sm text-gray-600 mt-1">
-                  解説を読んだり、音声で聴いたりして理解
+                  解説を読んだり、音声で聴いて理解
                 </p>
               </div>
             </div>
@@ -190,8 +193,8 @@ export default function Home() {
       </div>
 
       {/* フッター */}
-      <footer className="mt-16 py-8 bg-gray-50 border-t border-gray-100">
-        <div className="max-w-6xl mx-auto px-4 text-center text-sm text-gray-500">
+      <footer className="mt-12 sm:mt-16 py-6 sm:py-8 bg-gray-50 border-t border-gray-100">
+        <div className="max-w-6xl mx-auto px-4 text-center text-xs sm:text-sm text-gray-500">
           <p>Insight Tutor - マルチモーダル参考書学習アシスタント</p>
           <p className="mt-1">Powered by Google Gemini AI</p>
         </div>

@@ -15,6 +15,7 @@ export function ImageUploader({ onImageSelect, isDisabled = false }: ImageUpload
   const [preview, setPreview] = useState<ImagePreview | null>(null);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   // ファイルをBase64に変換
   const fileToBase64 = (file: File): Promise<string> => {
@@ -22,7 +23,6 @@ export function ImageUploader({ onImageSelect, isDisabled = false }: ImageUpload
       const reader = new FileReader();
       reader.onload = () => {
         const result = reader.result as string;
-        // "data:image/jpeg;base64," の部分を除去
         const base64 = result.split(",")[1];
         resolve(base64);
       };
@@ -116,10 +116,17 @@ export function ImageUploader({ onImageSelect, isDisabled = false }: ImageUpload
     [processFile]
   );
 
-  // クリックでファイル選択を開く
-  const handleClick = useCallback(() => {
+  // ファイル選択を開く
+  const handleFileClick = useCallback(() => {
     if (!isDisabled && fileInputRef.current) {
       fileInputRef.current.click();
+    }
+  }, [isDisabled]);
+
+  // カメラを開く
+  const handleCameraClick = useCallback(() => {
+    if (!isDisabled && cameraInputRef.current) {
+      cameraInputRef.current.click();
     }
   }, [isDisabled]);
 
@@ -133,87 +140,153 @@ export function ImageUploader({ onImageSelect, isDisabled = false }: ImageUpload
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
+    if (cameraInputRef.current) {
+      cameraInputRef.current.value = "";
+    }
   }, [preview]);
 
   return (
     <div className="w-full max-w-2xl mx-auto">
-      {/* ドロップゾーン */}
-      <div
-        onClick={handleClick}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-        className={`
-          relative border-2 border-dashed rounded-xl p-8 text-center cursor-pointer
-          transition-all duration-200 ease-in-out
-          ${isDisabled ? "opacity-50 cursor-not-allowed bg-gray-50" : ""}
-          ${isDragOver 
-            ? "border-blue-500 bg-blue-50" 
-            : "border-gray-300 hover:border-blue-400 hover:bg-gray-50"
-          }
-        `}
-        role="button"
-        tabIndex={isDisabled ? -1 : 0}
-        aria-label="画像をアップロード"
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            handleClick();
-          }
-        }}
-      >
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept={ALLOWED_IMAGE_TYPES.join(",")}
-          onChange={handleFileChange}
-          disabled={isDisabled}
-          className="hidden"
-          aria-hidden="true"
-        />
+      {/* 隠しinput要素 */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept={ALLOWED_IMAGE_TYPES.join(",")}
+        onChange={handleFileChange}
+        disabled={isDisabled}
+        className="hidden"
+        aria-hidden="true"
+      />
+      
+      {/* カメラ用input（スマホ対応） */}
+      <input
+        ref={cameraInputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        onChange={handleFileChange}
+        disabled={isDisabled}
+        className="hidden"
+        aria-hidden="true"
+      />
 
-        {preview ? (
-          // プレビュー表示
-          <div className="space-y-4">
-            <div className="relative w-full aspect-[4/3] max-h-80">
-              <Image
-                src={preview.previewUrl}
-                alt="選択された画像のプレビュー"
-                fill
-                className="object-contain rounded-lg"
-                sizes="(max-width: 768px) 100vw, 640px"
-              />
+      {preview ? (
+        // プレビュー表示
+        <div className="space-y-4 p-4 sm:p-6 bg-white rounded-xl shadow-sm border border-gray-200">
+          <div className="relative w-full aspect-[4/3] max-h-[60vh]">
+            <Image
+              src={preview.previewUrl}
+              alt="選択された画像のプレビュー"
+              fill
+              className="object-contain rounded-lg"
+              sizes="(max-width: 768px) 100vw, 640px"
+            />
+          </div>
+          <p className="text-sm text-gray-600 text-center truncate px-2">
+            {preview.file.name}
+          </p>
+          <button
+            type="button"
+            onClick={clearPreview}
+            disabled={isDisabled}
+            className="w-full px-4 py-3 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 border border-red-200"
+          >
+            🗑️ 画像を削除して選び直す
+          </button>
+        </div>
+      ) : (
+        // アップロードUI
+        <div className="space-y-4">
+          {/* ドロップゾーン（PC向け） */}
+          <div
+            onClick={handleFileClick}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            className={`
+              relative border-2 border-dashed rounded-xl p-6 sm:p-8 text-center cursor-pointer
+              transition-all duration-200 ease-in-out hidden sm:block
+              ${isDisabled ? "opacity-50 cursor-not-allowed bg-gray-50" : ""}
+              ${isDragOver 
+                ? "border-blue-500 bg-blue-50" 
+                : "border-gray-300 hover:border-blue-400 hover:bg-gray-50"
+              }
+            `}
+            role="button"
+            tabIndex={isDisabled ? -1 : 0}
+            aria-label="画像をアップロード"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                handleFileClick();
+              }
+            }}
+          >
+            <div className="space-y-4">
+              <div className="text-5xl">📚</div>
+              <div>
+                <p className="text-lg font-medium text-gray-700">
+                  参考書のページ画像をアップロード
+                </p>
+                <p className="text-sm text-gray-500 mt-1">
+                  ドラッグ＆ドロップ または クリックしてファイルを選択
+                </p>
+              </div>
+              <p className="text-xs text-gray-400">
+                対応形式: JPEG, PNG, WebP, GIF（最大10MB）
+              </p>
             </div>
-            <p className="text-sm text-gray-600">{preview.file.name}</p>
+          </div>
+
+          {/* モバイル用ボタン */}
+          <div className="grid grid-cols-1 gap-3 sm:hidden">
+            {/* カメラ撮影ボタン */}
             <button
               type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                clearPreview();
-              }}
+              onClick={handleCameraClick}
               disabled={isDisabled}
-              className="px-4 py-2 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+              className="flex items-center justify-center gap-3 px-6 py-5 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-lg font-semibold rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg disabled:opacity-50 active:scale-[0.98]"
             >
-              画像を削除
+              <span className="text-2xl">📷</span>
+              <span>カメラで撮影</span>
+            </button>
+
+            {/* ライブラリから選択ボタン */}
+            <button
+              type="button"
+              onClick={handleFileClick}
+              disabled={isDisabled}
+              className="flex items-center justify-center gap-3 px-6 py-5 bg-white text-gray-700 text-lg font-semibold rounded-xl border-2 border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all disabled:opacity-50 active:scale-[0.98]"
+            >
+              <span className="text-2xl">🖼️</span>
+              <span>ライブラリから選択</span>
             </button>
           </div>
-        ) : (
-          // アップロード促すUI
-          <div className="space-y-4">
-            <div className="text-5xl">📚</div>
-            <div>
-              <p className="text-lg font-medium text-gray-700">
-                参考書のページ画像をアップロード
-              </p>
-              <p className="text-sm text-gray-500 mt-1">
-                ドラッグ＆ドロップ または クリックしてファイルを選択
-              </p>
-            </div>
-            <p className="text-xs text-gray-400">
-              対応形式: JPEG, PNG, WebP, GIF（最大10MB）
-            </p>
+
+          {/* PC用の補助ボタン */}
+          <div className="hidden sm:flex justify-center gap-3">
+            <button
+              type="button"
+              onClick={handleCameraClick}
+              disabled={isDisabled}
+              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+            >
+              <span>📷</span>
+              <span>カメラで撮影</span>
+            </button>
           </div>
-        )}
-      </div>
+
+          {/* ヒント */}
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+            <h3 className="font-medium text-blue-800 text-sm mb-2">📌 きれいに撮影するコツ</h3>
+            <ul className="text-xs text-blue-700 space-y-1">
+              <li>• 明るい場所で撮影してください</li>
+              <li>• ページ全体が画面に入るように撮影</li>
+              <li>• 影が入らないように注意</li>
+              <li>• 斜めにならないよう真上から撮影</li>
+            </ul>
+          </div>
+        </div>
+      )}
 
       {/* エラー表示 */}
       {error && (
