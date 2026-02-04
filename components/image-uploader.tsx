@@ -21,16 +21,33 @@ export function ImageUploader({ onImageSelect, isDisabled = false }: ImageUpload
   const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
+  
       reader.onload = () => {
-        const result = reader.result as string;
+        const result = reader.result;
+  
+        if (typeof result !== "string") {
+          reject(new Error("FileReader result is not a string"));
+          return;
+        }
+  
         const base64 = result.split(",")[1];
+  
+        if (!base64) {
+          reject(new Error("Failed to extract base64 data"));
+          return;
+        }
+  
         resolve(base64);
       };
-      reader.onerror = reject;
+  
+      reader.onerror = () => {
+        reject(reader.error ?? new Error("FileReader error"));
+      };
+  
       reader.readAsDataURL(file);
     });
   };
-
+  
   // ファイルのバリデーション
   const validateFile = (file: File): string | null => {
     if (!ALLOWED_IMAGE_TYPES.includes(file.type as AllowedImageType)) {
@@ -94,27 +111,29 @@ export function ImageUploader({ onImageSelect, isDisabled = false }: ImageUpload
       e.preventDefault();
       e.stopPropagation();
       setIsDragOver(false);
-
+  
       if (isDisabled) return;
-
-      const files = e.dataTransfer.files;
-      if (files.length > 0) {
-        processFile(files[0]);
-      }
+  
+      const file = e.dataTransfer.files?.item(0);
+      if (!file) return;
+  
+      processFile(file);
     },
     [isDisabled, processFile]
   );
+  
 
   // ファイル選択
   const handleFileChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
-      const files = e.target.files;
-      if (files && files.length > 0) {
-        processFile(files[0]);
-      }
+      const file = e.target.files?.item(0);
+      if (!file) return;
+  
+      processFile(file);
     },
     [processFile]
   );
+  
 
   // ファイル選択を開く
   const handleFileClick = useCallback(() => {
